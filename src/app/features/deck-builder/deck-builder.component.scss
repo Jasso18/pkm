@@ -1,0 +1,106 @@
+.builder-layout {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+  height: 100vh;
+  overflow: hidden;
+  padding: 2rem;
+}
+
+.collection-section {
+  overflow-y: auto;
+  padding-right: 1rem;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--surface-border);
+    border-radius: 4px;
+  }
+}
+
+.collection-grid.mini {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  
+  .tcg-card {
+    aspect-ratio: 2.5 / 3.5;
+    
+    .card-header { font-size: 0.8rem; }
+    .card-stats { padding: 4px; font-size: 0.8rem; }
+    .card-ability, .card-footer, .card-hp { display: none; }
+  }
+}
+
+.deck-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.5rem;
+
+  .deck-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--surface-border);
+
+    h2 { margin: 0; font-size: 1.25rem; }
+  }
+
+  .deck-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 4px;
+    }
+  }
+
+  .deck-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.2);
+      
+      .remove {
+        opacity: 1;
+        color: var(--error);
+      }
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .name {
+      flex: 1;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .remove {
+      opacity: 0;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+  }
+}

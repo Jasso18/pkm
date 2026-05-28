@@ -12,6 +12,8 @@ CREATE TABLE public.user_profiles (
 -- 2. Player Statistics
 CREATE TABLE public.player_statistics (
   user_id UUID REFERENCES public.user_profiles(id) PRIMARY KEY,
+  level INTEGER DEFAULT 1 CHECK (level <= 120),
+  xp INTEGER DEFAULT 0,
   wins INTEGER DEFAULT 0,
   losses INTEGER DEFAULT 0,
   draws INTEGER DEFAULT 0,
@@ -62,6 +64,7 @@ CREATE TABLE public.deck_cards (
   deck_id UUID REFERENCES public.decks(id) ON DELETE CASCADE,
   card_id INTEGER REFERENCES public.pokemon_cards(id) ON DELETE CASCADE,
   quantity INTEGER DEFAULT 1 CHECK (quantity > 0 AND quantity <= 3),
+  is_starting_hand BOOLEAN DEFAULT false,
   UNIQUE(deck_id, card_id)
 );
 
@@ -104,6 +107,8 @@ CREATE TABLE public.match_results (
   match_id UUID REFERENCES public.online_matches(id) ON DELETE CASCADE,
   winner_id UUID REFERENCES public.user_profiles(id),
   loser_id UUID REFERENCES public.user_profiles(id),
+  is_local BOOLEAN DEFAULT false,
+  opponent_name TEXT,
   reason TEXT,
   completed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -143,6 +148,26 @@ CREATE TABLE public.chat_messages (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 14. Missions
+CREATE TABLE public.missions (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  target_count INTEGER NOT NULL,
+  reward_type TEXT CHECK (reward_type IN ('xp', 'card_rare', 'card_epic', 'card_legendary')),
+  reward_amount INTEGER DEFAULT 1
+);
+
+CREATE TABLE public.user_missions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.user_profiles(id) ON DELETE CASCADE,
+  mission_id INTEGER REFERENCES public.missions(id),
+  current_progress INTEGER DEFAULT 0,
+  is_completed BOOLEAN DEFAULT false,
+  claimed_at TIMESTAMP WITH TIME ZONE,
+  UNIQUE(user_id, mission_id)
+);
+
 -- RLS & Security setup (Basic examples)
 ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.decks ENABLE ROW LEVEL SECURITY;
@@ -168,6 +193,14 @@ CREATE POLICY "Users can manage their own decks."
 CREATE POLICY "Users can view their own collection."
   ON public.user_card_collection FOR SELECT
   USING ( auth.uid() = user_id );
+
+CREATE POLICY "Users can manage their own collection."
+  ON public.user_card_collection FOR ALL
+  USING ( auth.uid() = user_id );
+
+CREATE POLICY "Users can manage their own deck cards."
+  ON public.deck_cards FOR ALL
+  USING ( deck_id IN (SELECT id FROM public.decks WHERE user_id = auth.uid()) );
 
 -- Trigger for creating user profile after auth signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()

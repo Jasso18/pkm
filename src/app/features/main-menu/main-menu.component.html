@@ -1,0 +1,86 @@
+<div class="menu-container">
+  <div class="top-bar glass-panel">
+    <div class="user-info">
+      <span class="trainer-name">{{ userEmail }}</span>
+      <button class="btn-help" (click)="showRules = true" title="Reglas del Juego">❓</button>
+      <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <div class="level-system-container glass-panel">
+    <div class="level-header">
+      <h2>Nivel {{ level }}</h2>
+      <span class="xp-text">{{ xp }} / {{ xpRequired }} XP</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" [style.width.%]="(xp / xpRequired) * 100"></div>
+    </div>
+    
+    <div class="reward-section" *ngIf="nextRewardCard">
+      <h3>Siguiente Recompensa:</h3>
+      <div class="reward-card">
+        <img [src]="nextRewardCard.image_url" alt="Next Reward" class="reward-img">
+        <span>{{ nextRewardCard.name | titlecase }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <a routerLink="/battle" class="menu-card glass-panel play-vs-ai">
+      <div class="content">
+        <h2>Jugar vs IA</h2>
+        <p>Perfecciona tus habilidades contra la computadora.</p>
+      </div>
+    </a>
+
+    <a (click)="matchmaking.findMatch()" class="menu-card glass-panel play-online" style="cursor: pointer;">
+      <div class="content">
+        <h2>Jugar Online</h2>
+        <p>Desafía a otros entrenadores del mundo.</p>
+      </div>
+    </a>
+
+    <!-- Matchmaking Overlay -->
+    <div class="matchmaking-overlay glass-panel" *ngIf="matchmaking.isSearching()">
+      <h2>Buscando Oponente...</h2>
+      <div class="spinner"></div>
+      <button class="btn-secondary" (click)="matchmaking.cancelSearch()">Cancelar</button>
+    </div>
+
+    <a routerLink="/deck-builder" class="menu-card glass-panel deck-builder">
+      <div class="content">
+        <h2>Constructor de Mazos</h2>
+        <p>Construye tu mazo definitivo de 40 cartas.</p>
+      </div>
+    </a>
+
+    <a routerLink="/collection" class="menu-card glass-panel collection">
+      <div class="content">
+        <h2>Colección</h2>
+        <p>Mira todas las cartas que has conseguido.</p>
+      </div>
+    </a>
+
+    <a routerLink="/history" class="menu-card glass-panel history">
+      <div class="content">
+        <h2>Historial de Partidas</h2>
+        <p>Revisa tus victorias, empates y derrotas.</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- Rules Overlay -->
+  <div class="rules-overlay glass-panel" *ngIf="showRules">
+    <div class="rules-content">
+      <h2>📜 Reglas del Juego</h2>
+      <ul style="text-align: left; line-height: 1.6; margin-bottom: 2rem;">
+        <li><strong>Objetivo:</strong> Reduce los Puntos de Vida (HP) de tu rival a 0.</li>
+        <li><strong>Turnos:</strong> Robas 1 carta automáticamente al inicio de tu turno. Puedes tener hasta 5 cartas en el campo.</li>
+        <li><strong>Fase Principal:</strong> Juega cartas de tu mano hacia el campo en Posición de Ataque o Defensa.</li>
+        <li><strong>Fase de Ataque:</strong> Selecciona tus cartas en posición de ataque para atacar al rival (o a sus cartas).</li>
+        <li><strong>Habilidades:</strong> Las cartas en el campo por 2+ turnos pueden usar su Habilidad especial dependiendo de su tipo (Fuego, Agua, etc).</li>
+      </ul>
+      <button class="btn-primary" (click)="showRules = false">¡Entendido!</button>
+    </div>
+  </div>
+</div>

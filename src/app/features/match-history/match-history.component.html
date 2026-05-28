@@ -1,0 +1,39 @@
+<div class="history-container">
+  <header class="history-header">
+    <button routerLink="/main" class="back-btn"><i class="fas fa-arrow-left"></i> Volver</button>
+    <h1>Historial de Partidas</h1>
+  </header>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Cargando historial...</p>
+  </div>
+
+  <div class="history-list" *ngIf="!loading && matches.length > 0">
+    <div *ngFor="let match of matches" class="match-card" [ngClass]="match.result">
+      <div class="match-info">
+        <div class="opponent">
+          <i class="fas fa-user-ninja"></i> {{ match.opponentName || 'Rival Desconocido' }}
+          <span class="badge" [class.local]="match.isLocal" [class.online]="!match.isLocal">
+            {{ match.isLocal ? 'Local' : 'Online' }}
+          </span>
+        </div>
+        <div class="date">{{ match.date | date:'short' }}</div>
+      </div>
+      
+      <div class="match-result">
+        <span class="result-text" *ngIf="match.result === 'win'">VICTORIA</span>
+        <span class="result-text" *ngIf="match.result === 'loss'">DERROTA</span>
+        <span class="result-text" *ngIf="match.result === 'draw'">EMPATE</span>
+        <div class="reason">{{ match.reason === 'hp_zero' ? 'Por Puntos de Vida' : (match.reason === 'time_out' ? 'Por Tiempo' : (match.reason === 'surrender' ? 'Por Abandono' : match.reason)) }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && matches.length === 0">
+    <div class="icon">📜</div>
+    <h2>Aún no hay partidas</h2>
+    <p>Juega tu primera partida para empezar a registrar tu historial.</p>
+    <button routerLink="/main" class="primary-btn">Ir al Menú</button>
+  </div>
+</div>

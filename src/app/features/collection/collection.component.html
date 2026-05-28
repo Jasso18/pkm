@@ -1,0 +1,42 @@
+<div class="page-container">
+  <div class="page-header">
+    <button class="btn-back" routerLink="/main">← Volver</button>
+    <h1>Mi Colección</h1>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Cargando tus cartas...</p>
+  </div>
+
+  <div class="collection-grid" *ngIf="!loading">
+    <div class="tcg-card" *ngFor="let card of cards; let i = index" [ngClass]="card.rarity">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-header">
+            <span class="card-name">{{ card.name | titlecase }}</span>
+            <span class="card-hp">HP {{ card.hp }}</span>
+          </div>
+          <div class="card-image-container">
+            <img [src]="card.image_url" [alt]="card.name" loading="lazy">
+          </div>
+          <div class="card-stats">
+            <div class="stat"><span class="label">ATK</span> {{ card.attack }}</div>
+            <div class="stat"><span class="label">DEF</span> {{ card.defense }}</div>
+          </div>
+          <div class="card-ability" style="padding: 6px;">
+            <strong style="font-size: 0.75rem; margin-bottom: 2px;">{{ getAbilitySymbol(card.type) }} Habilidad ({{ card.type | uppercase }})</strong>
+            <p style="font-size: 0.65rem;">{{ getAbilityDescription(card.type) }}</p>
+          </div>
+          <div class="card-footer">
+            <span class="card-type">{{ card.type | uppercase }}</span>
+            <span class="card-rarity">{{ card.rarity | uppercase }}</span>
+          </div>
+          <div class="card-quantity">
+            <span>x{{ collectionData[i]?.quantity || 1 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

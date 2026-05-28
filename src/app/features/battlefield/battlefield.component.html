@@ -1,0 +1,131 @@
+<div class="battlefield-container" *ngIf="engine.gameState() as state">
+  <!-- Game Over Overlay -->
+  <div class="game-over-overlay glass-panel" *ngIf="state.winnerId">
+    <h1>{{ state.winnerId === 'player' ? '¡HAS GANADO!' : 'DERROTA' }}</h1>
+    <button class="btn-primary" routerLink="/main">Volver al Menú</button>
+  </div>
+
+  <!-- Draw Prompt Modal -->
+  <div class="draw-prompt-overlay glass-panel" *ngIf="state.pendingAction?.type === 'draw_prompt' && state.pendingAction?.playerId === 'player'">
+    <h2>¿Quieres robar una carta del mazo?</h2>
+    <div class="actions">
+      <button class="btn-primary" (click)="resolveDraw(true)">Sí</button>
+      <button class="btn-secondary" (click)="resolveDraw(false)">No</button>
+    </div>
+  </div>
+
+  <div class="board">
+    <!-- Opponent Side -->
+    <div class="player-zone opponent">
+      <div class="player-stats">
+        <div class="opponent-name" style="font-weight: bold; margin-bottom: 5px; font-size: 1.1rem; color: #facc15; text-align: right;">
+          {{ opponentName }} - Nivel {{ opponentLevel }}
+        </div>
+        <div class="deck-info" style="text-align: right; margin-bottom: 5px;">Mazo: {{ state.player2.deck.length }} | Mano: {{ state.player2.hand.length }}</div>
+        <div class="hp-bar opponent-hp">
+          <div class="fill" [style.width.%]="(state.player2.hp / 4000) * 100"></div>
+          <span>HP {{ state.player2.hp }} / 4000</span>
+        </div>
+      </div>
+      
+      <div class="field-row">
+        <div class="card-slot" *ngFor="let i of [0,1,2,3,4]">
+          <div class="field-card opponent-card" *ngIf="state.player2.field[i]" 
+               [class.defense]="state.player2.field[i].position === 'defense'"
+               [class.targetable]="targetSelectionMode"
+               (click)="targetSelectionMode ? declareAttack(state.player2.field[i].instance_id) : null">
+            <div class="target-indicator" *ngIf="targetSelectionMode">OBJETIVO</div>
+            <div class="rarity-badge {{state.player2.field[i].rarity}}">{{state.player2.field[i].rarity}}</div>
+            <img [src]="state.player2.field[i].image_url">
+            <div class="stats">{{ state.player2.field[i].attack }}/{{ state.player2.field[i].defense }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Info -->
+    <div class="center-bar">
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <button class="btn-back" (click)="surrender()">Rendirse</button>
+        <button class="btn-primary" 
+                style="padding: 8px 16px; border-radius: 6px; font-weight: bold; background: var(--primary); color: white; border: none; cursor: pointer;"
+                *ngIf="state.currentPlayerId === 'player'"
+                (click)="engine.nextPhase()">
+          {{ (state.currentPhase === 'main' && state.turnNumber > 2) ? 'Pasar a Ataque' : 'Terminar Fase' }}
+        </button>
+      </div>
+      <div class="timers-info" style="text-align: center; color: white;">
+        <h3 style="margin: 0; font-size: 1.5rem;">Tiempo: {{ formatTime(state.matchTimeRemaining) }}</h3>
+      </div>
+      <div class="phase-indicator">
+        <span [class.active]="state.currentPhase === 'draw'">ROBAR</span>
+        <span [class.active]="state.currentPhase === 'main'">PRINCIPAL</span>
+        <span [class.active]="state.currentPhase === 'attack'">ATAQUE</span>
+        <span [class.active]="state.currentPhase === 'end'">FIN</span>
+      </div>
+      <div class="phase-timer" style="color: var(--primary); font-weight: bold; font-size: 1.2rem;">
+        {{ state.phaseTimeRemaining }}s
+      </div>
+    </div>
+
+    <!-- Player Side -->
+    <div class="player-zone player">
+      <div class="field-row">
+        <div class="card-slot" *ngFor="let i of [0,1,2,3,4]">
+          <div class="field-card player-card" *ngIf="state.player1.field[i]" 
+               [class.defense]="state.player1.field[i].position === 'defense'"
+               [class.can-attack]="state.player1.field[i].can_attack && state.currentPhase === 'attack'"
+               [class.selected]="selectedCardId === state.player1.field[i].instance_id"
+               (click)="selectForAttack(state.player1.field[i].instance_id)">
+            <div class="attack-indicator" *ngIf="state.player1.field[i].can_attack && state.currentPhase === 'attack'">ATACAR</div>
+            <div class="rarity-badge {{state.player1.field[i].rarity}}">{{state.player1.field[i].rarity}}</div>
+            <img [src]="state.player1.field[i].image_url">
+            <div class="stats">{{ state.player1.field[i].attack }}/{{ state.player1.field[i].defense }}</div>
+            <!-- Habilidad Button overlay -->
+            <button class="ability-btn" 
+                    *ngIf="state.currentPhase === 'main' && state.currentPlayerId === 'player' && state.player1.field[i].turns_on_field >= 2 && !state.player1.field[i].ability_used"
+                    (click)="activateAbility(state.player1.field[i].instance_id); $event.stopPropagation()">
+              HABILIDAD
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="player-stats">
+        <div class="deck-info">Mazo: {{ state.player1.deck.length }}</div>
+        <div class="hp-bar player-hp">
+          <div class="fill" [style.width.%]="(state.player1.hp / 4000) * 100"></div>
+          <span>HP {{ state.player1.hp }} / 4000</span>
+        </div>
+      </div>
+
+      <!-- Player Hand -->
+      <div class="hand-row" [class.disabled]="state.currentPlayerId !== 'player'">
+        <div class="hand-card" *ngFor="let card of state.player1.hand"
+             (click)="state.currentPhase === 'main' && state.currentPlayerId === 'player' ? playCard(card.instance_id, 'attack') : null"
+             style="cursor: pointer;">
+          <div class="card-inner">
+            <img [src]="card.image_url" alt="{{ card.name }}">
+            <div class="rarity-badge {{card.rarity}}">{{card.rarity}}</div>
+            <div class="stats">
+              <span class="atk" style="white-space: nowrap;">ATK: {{ card.attack }}</span>
+              <span class="def" style="white-space: nowrap;">DEF: {{ card.defense }}</span>
+            </div>
+          </div>
+          <!-- Play actions overlay -->
+          <div class="play-actions" *ngIf="state.currentPhase === 'main' && state.currentPlayerId === 'player'">
+            <button (click)="playCard(card.instance_id, 'attack'); $event.stopPropagation()">ATK</button>
+            <div class="ability-symbol" [title]="getAbilityDescription(card.type)" style="cursor: help; font-size: 1.2rem; text-shadow: 0 0 5px rgba(0,0,0,0.8); display: flex; align-items: center;">
+               {{ getAbilitySymbol(card.type) }}
+            </div>
+            <button (click)="playCard(card.instance_id, 'defense'); $event.stopPropagation()">DEF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="direct-attack-overlay" *ngIf="targetSelectionMode && state.player2.field.length === 0" (click)="declareAttack(null)">
+    <h2>¡Ataque Directo! Haz clic aquí.</h2>
+  </div>
+</div>

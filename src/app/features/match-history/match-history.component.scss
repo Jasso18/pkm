@@ -1,0 +1,202 @@
+.history-container {
+  min-height: 100vh;
+  padding: 2rem;
+  background: radial-gradient(circle at top right, #1a1a2e, #0f0f1a);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+
+  .back-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(-5px);
+    }
+  }
+}
+
+.loading-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #00f2fe;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #a0a0b0;
+    margin-bottom: 2rem;
+  }
+
+  .primary-btn {
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
+    }
+  }
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.match-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+  }
+
+  &:hover {
+    transform: translateY(-3px) scale(1.01);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  &.win {
+    &::before { background: linear-gradient(to bottom, #00b09b, #96c93d); }
+    .result-text { color: #96c93d; }
+  }
+
+  &.loss {
+    &::before { background: linear-gradient(to bottom, #ff416c, #ff4b2b); }
+    .result-text { color: #ff416c; }
+  }
+
+  &.draw {
+    &::before { background: linear-gradient(to bottom, #f6d365, #fda085); }
+    .result-text { color: #f6d365; }
+  }
+
+  .match-info {
+    .opponent {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+
+      .badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: bold;
+
+        &.local {
+          background: rgba(150, 201, 61, 0.2);
+          color: #96c93d;
+          border: 1px solid rgba(150, 201, 61, 0.4);
+        }
+        &.online {
+          background: rgba(0, 242, 254, 0.2);
+          color: #00f2fe;
+          border: 1px solid rgba(0, 242, 254, 0.4);
+        }
+      }
+    }
+
+    .date {
+      color: #8a8a9a;
+      font-size: 0.9rem;
+    }
+  }
+
+  .match-result {
+    text-align: right;
+
+    .result-text {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 0.2rem;
+    }
+
+    .reason {
+      color: #8a8a9a;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,61 @@
+<div class="page-container builder-layout">
+  <div class="collection-section">
+    <div class="page-header">
+      <button class="btn-back" routerLink="/main">← Volver</button>
+      <h2>Cartas Disponibles</h2>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="collection-grid mini" *ngIf="!loading">
+      <div class="tcg-card" *ngFor="let card of availableCards" [ngClass]="card.rarity" (click)="addToDeck(card)">
+        <div class="card-inner">
+          <div class="card-front">
+            <div class="card-header">
+              <span class="card-name">{{ card.name | titlecase }}</span>
+            </div>
+            <div class="card-image-container">
+              <img [src]="card.image_url" [alt]="card.name" loading="lazy">
+            </div>
+            <div class="card-stats">
+              <div class="stat"><span class="label">ATK</span> {{ card.attack }}</div>
+              <div class="stat"><span class="label">DEF</span> {{ card.defense }}</div>
+            </div>
+            <div class="card-ability" style="padding: 6px; flex: 1;">
+              <strong style="font-size: 0.75rem; margin-bottom: 2px;">{{ getAbilitySymbol(card.type) }} Habilidad ({{ card.type | uppercase }})</strong>
+              <p style="font-size: 0.65rem;">{{ getAbilityDescription(card.type) }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="deck-section glass-panel">
+    <div class="deck-header">
+      <h2>Mano Inicial ({{ startingHand.length }}/6)</h2>
+      <button class="btn-primary" [disabled]="startingHand.length !== 6" (click)="saveDeck()">Guardar Mazo</button>
+    </div>
+    
+    <div class="deck-list">
+      <div class="deck-item" *ngFor="let card of startingHand; let i = index" (click)="removeFromHand(i)">
+        <img [src]="card.image_url" [alt]="card.name">
+        <span class="name">{{ card.name | titlecase }}</span>
+        <span class="remove">×</span>
+      </div>
+    </div>
+
+    <div class="deck-header" style="margin-top: 1rem;">
+      <h2>Mazo de Robo ({{ deck.length }})</h2>
+    </div>
+    <div class="deck-list">
+      <div class="deck-item" *ngFor="let card of deck; let i = index" (click)="removeFromDeck(i)">
+        <img [src]="card.image_url" [alt]="card.name">
+        <span class="name">{{ card.name | titlecase }}</span>
+        <span class="remove">×</span>
+      </div>
+    </div>
+  </div>
+</div>
