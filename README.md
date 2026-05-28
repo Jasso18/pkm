@@ -1,27 +1,39 @@
-# TcgWeb
+# 🃏 Proyecto TCG Web - Juego de Cartas Coleccionables Pokémon
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+Bienvenido al repositorio oficial del **Proyecto TCG Web**, un videojuego web de Cartas Coleccionables desarrollado con Angular 18, diseñado como entrega para evaluación departamental. 
 
-## Development server
+En este juego tomas el papel de un Entrenador Pokémon para armar tu mazo, gestionar tu colección y combatir tanto de manera Local contra una IA inteligente, como en línea (Multijugador P2P) contra tus amigos alrededor del mundo.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## ✨ Características Principales
+* **Modo Local (VS IA):** Combate 100% sin conexión contra un oponente simulado y guarda tus resultados en el historial de almacenamiento local (implementación de Base de Datos Local estilo SQLite).
+* **Modo Online Multijugador:** Encuentra partidas a través del sistema de *Matchmaking* en tiempo real gestionado a través de Supabase y WebSockets.
+* **Sistema de Colecciones:** Cada carta es consultada dinámicamente desde *PokeAPI*, y se asignan estadísticas y habilidades especiales automáticamente en base al tipo de cada Pokémon.
+* **Constructor de Mazos:** Selecciona estratégicamente 6 cartas para tu mano inicial y guarda configuraciones que persisten en la nube.
+* **Diseño e Interfaz Modernos:** Interfaz estéticamente pulida con el estilo *Glassmorphism*, paletas vibrantes, animaciones fluidas en el campo de batalla, y adaptabilidad (Responsive).
+* **Motor de Reglas Riguroso:** Implementación estricta de las mecánicas TCG clásicas, gestionando Daño de Batalla, Fases de Robo, Posiciones de Ataque y Defensa, y Habilidades de supervivencia.
 
-## Code scaffolding
+## 🛠️ Stack Tecnológico (Tecnologías Usadas)
+- **Frontend:** Angular 18 (Standalone Components, RxJS, Signals)
+- **Estilos:** SCSS (Sass) Nativo con animaciones CSS3
+- **Base de Datos / Backend:** Supabase (PostgreSQL + Auth + Realtime Channels)
+- **Base de Datos Local:** `sql.js` sobre LocalStorage (Simulando SQLite local)
+- **APIs Externas:** PokeAPI para la ingesta de JSON de cartas y metadatos.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## 🚀 Despliegue en Desarrollo
 
-## Build
+Este proyecto fue generado con [Angular CLI](https://github.com/angular/angular-cli). Para ejecutar este proyecto localmente en tu computadora:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+1. **Instala dependencias:**
+   Ejecuta `npm install` en la raíz del proyecto.
+   
+2. **Levanta el servidor local:**
+   Ejecuta `ng serve`. 
+   
+3. **Accede al juego:**
+   Abre tu navegador y navega hacia `http://localhost:4200/`. La aplicación se recargará automáticamente si realizas cambios en los archivos fuente.
 
-## Running unit tests
+## 👥 Arquitectura y Mecánicas
+Para conocer detalladamente la estructura y manual de usuario, revisa la [Documentación Completa](documentacion_proyecto.md) generada de este repositorio, donde se explican todas las tablas, mecánicas en línea, decisiones arquitectónicas, e inconvenientes superados.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+---
+*Desarrollado para la evaluación del Tercer Departamental.*
